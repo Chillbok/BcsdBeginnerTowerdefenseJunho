@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -9,19 +10,23 @@ public enum WeaponState {SearchTarget = 0, AttackToTarget}
 public class TowerWeapon : MonoBehaviour
 {
     [SerializeField]
-    private GameObject      projectilePrefab;                           //발사체 Prefab
+    private GameObject      projectilePrefab; //발사체 Prefab
     [SerializeField]
-    private Transform       spawnPoint;                                 // 발사체 생성 위치
+    private Transform       spawnPoint; //발사체 생성 위치
+    [SerializeField] 
+    private float           attackRate = 0.5f; //공격 속도
     [SerializeField]
-    private float           attackRate = 0.5f;                          //공격 속도
+    private float           attackRange = 2.0f; //공격 범위
     [SerializeField]
-    private float           attackRange = 2.0f;                         //공격 범위
-    private WeaponState     weaponState = WeaponState.SearchTarget;     //타워 무기의 상태
-    private Transform       attackTarget = null;                        //공격 대상
-    private EnemySpawner    enemySpawner;                               //게임에 존재하는 적 정보 획득용
+    private int attackDamage = 1; //공격력
+    private WeaponState     weaponState = WeaponState.SearchTarget; //타워 무기의 상태
+    private Transform       attackTarget = null; //공격 대상
+    private EnemySpawner    enemySpawner; //게임에 존재하는 적 정보 획득용
 
     public void Setup(EnemySpawner enemySpawner)
     {
+        this.enemySpawner = enemySpawner;
+
         //최초 상태를 WeaponState.SearchTarget으로 설정
         ChangeState(WeaponState.SearchTarget);
     }
@@ -65,7 +70,7 @@ public class TowerWeapon : MonoBehaviour
             //제일 가까이 있는 적을 찾기 위해 최초 거리를 최대한 크게 설정
             float closestDistSqr/*가장 가까운 적과의 거리 담는 변수*/ = Mathf.Infinity;
             //EnemySpawner의 EnemyList에 있는 현재 맵에 존재하는 모든 적 검사
-            for (int i = 0; i < enemySpawner.EnemyList.Count; ++i)
+            for (int i = 0; i < enemySpawner.EnemyList.Count; ++ i)
             {
                 float distance = Vector3.Distance(enemySpawner.EnemyList[i].transform.position, transform.position);
                 //현재 검사 중인 적과의 거리가 공격 범위 내에 있고,
@@ -116,6 +121,8 @@ public class TowerWeapon : MonoBehaviour
 
     private void SpawnProjectile()
     {
-        Instantiate(projectilePrefab, spawnPoint.position, Quaternion.identity);
+        GameObject clone = Instantiate(projectilePrefab, spawnPoint.position, Quaternion.identity);
+        //생성된 발사체에게 공격대상(attackTarget 정보 제공)
+        clone.GetComponent<Projectile>().Setup(attackTarget, attackDamage);
     }
 }
