@@ -10,6 +10,8 @@ public class TowerDataViewer : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textRange;
     [SerializeField] private TextMeshProUGUI textLevel;
     [SerializeField] private TowerAttackRange towerAttackRange;
+    [SerializeField] private Button buttonUpgrade;
+    [SerializeField] SystemTextViewer systemTextViewer;
 
     private TowerWeapon currentTower;
 
@@ -47,9 +49,40 @@ public class TowerDataViewer : MonoBehaviour
 
     private void UpdateTowerData()
     {
+        imageTower.sprite = currentTower.TowerSprite;
         textDamage.text = "Damage : " + currentTower.Damage;
         textRate.text = "Rate : " + currentTower.Rate;
         textRange.text = "Range : " + currentTower.Range;
         textRange.text = "Level : " + currentTower.Level;
+
+        //업그레이드가 불가능해지면 버튼 비활성화
+        buttonUpgrade.interactable = currentTower.Level < currentTower.MaxLevel ? true : false;
+    }
+
+    public void OnClickEventTowerUpgrade()
+    {
+        //타워 업그레이드 시도 (성공: true, 실패: false)
+        bool isSuccess = currentTower.Upgrade();
+
+        if (isSuccess == true)
+        {
+            //타워가 업그레이드되었기 때문에 타워 정보 갱신
+            UpdateTowerData();
+            //타워 주변에 보이는 공격 범위도 갱신
+            towerAttackRange.OnAttackRange(currentTower.transform.position, currentTower.Range);
+        }
+        else
+        {
+            //타워 업그레이드에 필요한 비용이 부족하다고 출력
+            systemTextViewer.PrintText(SystemType.Money);
+        }
+    }
+
+    public void OnClickEventTowerSell()
+    {
+        //타워 판매
+        currentTower.Sell();
+        //선택한 타워가 사라져서 Panel, 공격 범위 Off
+        OffPanel();
     }
 }
