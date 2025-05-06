@@ -4,6 +4,7 @@ using UnityEngine;
 public class TowerTemplate : ScriptableObject
 {
     public GameObject towerPrefab; //타워 생성을 위한 프리팹
+    public GameObject followTowerPrefab; //임시 타워 프리팹
     public Weapon[] weapon; //레벨별 타워(무기) 정보
 
     //클래스 내부에 구조체를 만들면 클래스 외부에서는 구조체 변수를 선언할 수 없다

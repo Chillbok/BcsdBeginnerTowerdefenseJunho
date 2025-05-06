@@ -2,11 +2,6 @@ using UnityEngine;
 
 public class TowerAttackRange : MonoBehaviour
 {
-    void Awake()
-    {
-        OffAttackRange();
-    }
-
     public void OnAttackRange(Vector3 position, float range)
     {
         gameObject.SetActive(true); //공격범위 활성화
