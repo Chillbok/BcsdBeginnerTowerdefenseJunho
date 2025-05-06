@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.XR;
 
 //열거형. 공격 대상을 탐색하는 SearchTarget, 대상을 공격하는 AttackToTarget
-public enum WeaponState {SearchTarget = 0, AttackToTarget}
+public enum WeaponState {SearchTarget = 0, TryAttackCannon, }//AttackToTarget}
 
 public class TowerWeapon : MonoBehaviour
 {
